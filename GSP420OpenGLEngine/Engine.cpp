@@ -15,6 +15,12 @@ Engine::Engine(void)
 
 Engine::~Engine(void)
 {
+	for(auto object : allObjects) // remove all objects safely
+	{
+		delete object;
+	}
+
+	allObjects.clear(); // clear the array
 }
 
 void Engine::init()
@@ -100,12 +106,12 @@ void Engine::updateAll()
 
  void resizeWindow(GLFWwindow* window,int w,int h)
  {
-	 glfwMakeContextCurrent(window);
-	 glViewport(0,0,w,h);
+	 glfwMakeContextCurrent(window);	// make sure the view being resized is the same context that changed
+	 glViewport(0,0,w,h);				// resize the opengl view to cover the entire window
 
-	 glMatrixMode(GL_PROJECTION);
+	 glMatrixMode(GL_PROJECTION);		
 	 glLoadIdentity();
-	 gluOrtho2D(-1,1,-1,1);
+	 gluOrtho2D(-1,1,-1,1);				// set the bounds of the view to [-1, 1] in x and y
 
-	 glMatrixMode(GL_MODELVIEW);
+	 glMatrixMode(GL_MODELVIEW);		// set the matrix back to the modelmatrix
  }
