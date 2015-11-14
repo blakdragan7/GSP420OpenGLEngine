@@ -5,7 +5,7 @@ class DrawableObject
 {
 public:
 	Vec2D position;
-	Vec2D Scale;
+	Vec2D scale;
 	double rotation;
 
 public:
