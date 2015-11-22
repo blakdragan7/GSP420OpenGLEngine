@@ -1,26 +1,23 @@
 #include "Engine.h"
 #include "DrawableObject.h"
+#include "Level.h"
 #include "Sprite.h"
 #include <ctime>
 
 static Engine* engineInstance = 0;
 
 void resizeWindow(GLFWwindow*,int,int);
+void* UpdateThreadFunc(void* data);
 
 Engine::Engine(void)
 {
 	engineInstance = this;
+	shouldRun = true;
 }
 
 
 Engine::~Engine(void)
 {
-	for(auto object : allObjects) // remove all objects safely
-	{
-		delete object;
-	}
-
-	allObjects.clear(); // clear the array
 }
 
 void Engine::init()
@@ -51,7 +48,13 @@ void Engine::init()
 
 	glClearColor(1.0,0.0,0.0,1.0); // Set the Clear Color to red its not needed just something I always do
 
-	allObjects.push_back(new Sprite("data/background.png",0)); // add background Sprite to list of drawable Objects
+	levels.push_back(new Level()); // Add a default level
+
+	levels[0]->addOBject(new Sprite("data/background.png",0)); // add background to default level
+
+	currentLevel = 0; // Set current level to default level
+
+	pthread_create(&updateThread,0,UpdateThreadFunc,this); // spawn thread for updates
 }
 
 void Engine::run()
@@ -59,7 +62,6 @@ void Engine::run()
 	while(!glfwWindowShouldClose(mainWindow)) // if you close the window stop the program
 	{
 		drawGLScene(); // draw the scene
-		updateAll(); // update all objects
 		glfwPollEvents(); // handle window events
 	}
 }
@@ -67,6 +69,16 @@ void Engine::run()
 void Engine::shutdown()
 {
 
+	shouldRun = false;
+
+	pthread_join(updateThread,0);
+
+	for (auto level : levels)
+	{
+		delete level;
+	}
+
+	levels.clear();
 }
 
 void Engine::drawGLScene()
@@ -76,10 +88,8 @@ void Engine::drawGLScene()
 	glMatrixMode(GL_MODELVIEW); // set matrix mode to model vuew
 	glLoadIdentity(); // load identiy matric for modelview matric
 
-	for(auto object : allObjects) // c++ 11 syntax for a for loop
-	{
-		object->draw(); // draw every object
-	}
+	if(levels.size() > currentLevel && currentLevel >= 0)	// check to make sure the current level is valid
+		levels[currentLevel]->draw();	// if so draw the level
 
 	glfwSwapBuffers(mainWindow); // Swap Back buffer to front buffer
 }
@@ -91,17 +101,15 @@ void Engine::updateAll()
 
 	float dt = (float)(time - lastTime) / (float)CLOCKS_PER_SEC; // calculate the time difference from the last update
 
-	for(auto object : allObjects) // c++ 11 syntax for a for loop
-	{
-		object->update(dt);  // Update every object by the time difference
-	}
+	if(levels.size() > currentLevel && currentLevel >= 0)	// check to make sure the current level is valid
+		levels[currentLevel]->update(dt);	// if so update the level
 
 	lastTime = time;
 }
 
- void Engine::AddObjectToEngine(DrawableObject* newObject)
+ void Engine::AddLevelToEngine(Level* newObject)
  {
-	 engineInstance->allObjects.push_back(newObject);
+	 engineInstance->levels.push_back(newObject);
  }
 
  void resizeWindow(GLFWwindow* window,int w,int h)
@@ -114,4 +122,16 @@ void Engine::updateAll()
 	 gluOrtho2D(-1,1,-1,1);				// set the bounds of the view to [-1, 1] in x and y
 
 	 glMatrixMode(GL_MODELVIEW);		// set the matrix back to the modelmatrix
+ }
+
+ void* UpdateThreadFunc(void* data) // Background thread to update Engine
+ {
+	 Engine* engine = static_cast<Engine*>(data);
+
+	 while(engine->shouldRun)
+	 {
+		 engine->updateAll();
+	 }
+
+	 return 0;
  }

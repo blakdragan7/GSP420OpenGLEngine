@@ -38,6 +38,7 @@ Sprite::~Sprite(void)
 
 void Sprite::draw()
 {
+
 	glMatrixMode(GL_MODELVIEW); // Set The Current Matrix being modified (options are ModelView , Model, View, Projection, and Texture)
 
 	glPushMatrix(); // Save Current Matrix and copy we only modify the copy
@@ -76,10 +77,13 @@ void Sprite::draw()
 	glEnd(); // Single To OpenGL that this opbject is finished being drawn
 
 	glPopMatrix(); // Return To the previous copy of the matric before it was modified here
+
 }
 
 void Sprite::update(float dt)
 {
+
 	 // This is where any updating would occure (ex physics life check etc.. )
 	//  This can and should be overriden in a sub class 
+
 }

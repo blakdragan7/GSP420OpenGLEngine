@@ -9,12 +9,21 @@
 	if more then one is created the the last one made is what will be used with  AddObjectToEngine
 */
 
+ // Pre declar All classes as to avoid include loops
+
 class DrawableObject;
+class Level;
+
 class Engine
 {
 private:
 	GLFWwindow* mainWindow;
-	std::vector<DrawableObject*> allObjects;
+	std::vector<Level*> levels;
+
+	int currentLevel;
+	pthread_t updateThread;
+
+	bool shouldRun;
 
 public:
 	Engine(void);
@@ -27,6 +36,11 @@ public:
 	void drawGLScene(); // draw the scene
 	void updateAll(); // ipdate every object
 
-	static void AddObjectToEngine(DrawableObject* newObject); // used to add an object to the egnine so that it is drawn and updated 
+	void setLevel(int level); // sets the current level to be drawn and updated
+	void setLevel(Level* level); // sets the current leleve to be dran and updated
+
+	static void AddLevelToEngine(Level* newObject); // used to add an level to the egnine so that it is drawn and updated 
+
+	friend void* UpdateThreadFunc(void*); // Make update thread func friend of class so it can access private variables
 };
 

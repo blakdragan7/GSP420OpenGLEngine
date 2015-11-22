@@ -7,6 +7,7 @@
 
 #include "targetver.h"
 
+#include <mutex>
 #include <stdio.h>
 #include <tchar.h>
 #include <GL\glew.h>
