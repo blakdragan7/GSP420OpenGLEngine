@@ -6,11 +6,10 @@ class GLShaderProgram;
 class Sprite :
 	public DrawableObject
 {
-private:
+protected:
 	GLTexture* texture; // texture shown by this sprite
 	GLShaderProgram* program; // The Shader Program Used By This Sprite.
 
-protected:
 	bool shouldRenderTexture; // if true then will bind and render texture
 	bool shouldUseProgram;    // if true then will use a shader program 
 							
