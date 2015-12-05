@@ -1,5 +1,8 @@
 #include "Input.h"
 
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////     CURRENT BUGS AND ISSUES      ///////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -43,17 +46,24 @@
 //	Removed the commented out code.																																			  //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void Key_Callback(GLFWwindow*, int, int, int, int);
-void Cursor_Position_Callback(GLFWwindow*, double, double);
-void Mouse_Button_Callback(GLFWwindow*, int, int, int);
-void Scroll_Callback(GLFWwindow*, double, double);
+bool Input::mouse_Left = false;
+bool Input::mouse_Right = false;
+bool Input::mouse_Middle = false;
+
+double Input::mouseX = 0.0;
+double Input::mouseY = 0.0;
+
+int Input::key = 0;
+int Input::scan_code = 0;
+int Input::action = 0;
+int Input::mods = 0;
 
 Input::Input()
 {
 
 }
 
-Input::Input(const Input&)
+Input::Input(const Input &I)
 {
 
 }
@@ -63,116 +73,78 @@ Input::~Input()
 
 }
 
-void Input::Initialize()
+void Input::Key_Callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	Input::key = key;
+	Input::scan_code = scancode;
+	Input::action = action;
+	Input::mods = mods;
+}
+
+void Input::Initialize(GLFWwindow* w)
 {
 	/*
 	Setup the keyboard and mouse functions
 	*/
 
-	glfwSetKeyCallback(window, Key_Callback);						// sets up the keyboard input
-	glfwSetCursorPosCallback(window, Cursor_Position_Callback);		// tracks the cursor's position
-	glfwSetMouseButtonCallback(window, Mouse_Button_Callback);		// setus up the mouse button input
-	glfwSetScrollCallback(window, Scroll_Callback);					// tracks the mouse's scroll wheel
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);		// allows the mouse to move freely between windows
+	glfwSetKeyCallback(w, Key_Callback);						// sets up the keyboard input
+	glfwSetCursorPosCallback(w, SetCursorPos);					// tracks the cursor's position
+	glfwSetMouseButtonCallback(w, Mouse_Button_Callback);	// setus up the mouse button input
+	//glfwSetScrollCallback(window, Scroll_Callback);				// tracks the mouse's scroll wheel
+	glfwSetInputMode(w, GLFW_CURSOR, GLFW_CURSOR_NORMAL);		// allows the mouse to move freely between windows
 }
 
-void Key_Callback(GLFWwindow* window, int key, int scan_code, int action, int mods)
+void Input::SetCursorPos(GLFWwindow* window, double xpos, double ypos)
 {
 	/*
-	Setup keyboard keys that can be pressed
-	Set keys to take action on release to prevent multiple calls being made per frame
-	Need keys for manipulating the camera and pausing/exiting the program
+		Poll the cursor for its position
 	*/
 
-	if (key == GLFW_KEY_W && action == GLFW_RELEASE)
-	{
-		/*
-		W key has been released
-		*/
-	}
+	int width = 0;
+	int height = 0;
 
-	if (key == GLFW_KEY_A && action == GLFW_RELEASE)
-	{
-		/*
-		A key has been released
-		*/
-	}
-
-	if (key == GLFW_KEY_S && action == GLFW_RELEASE)
-	{
-		/*
-		S key has been released
-		*/
-	}
-
-	if (key == GLFW_KEY_D && action == GLFW_RELEASE)
-	{
-		/*
-		D key has been released
-		*/
-	}
-
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
-	{
-		/*
-		ESCAPE key has been released
-		*/
-	}
-
-	if (key == GLFW_KEY_UP && action == GLFW_RELEASE)
-	{
-		/*
-		UP key has been released
-		*/
-	}
-
-	if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE)
-	{
-		/*
-		LEFT key has been released
-		*/
-	}
-
-	if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE)
-	{
-		/*
-		DOWN key has been released
-		*/
-	}
-
-	if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE)
-	{
-		/*
-		RIGHT key has been released
-		*/
-	}
-
-	
-}
-
-void Cursor_Position_Callback(GLFWwindow* window, double xpos, double ypos)
-{
-	/*
-	Poll the cursor for its position
-	*/
-
+	glfwGetWindowSize(window,&width,&height);
 	glfwGetCursorPos(window, &xpos, &ypos);	// poll cursor position
+
+	Input::mouseX = (xpos * 2.0 / (float)width) - 1.0;
+	Input::mouseY = (ypos * 2.0 / (float)-height) + 1.0;
+
+	//cout << Input::mouseX << " " << Input::mouseY << endl;
 
 	return;
 }
 
-void Mouse_Button_Callback(GLFWwindow* window, int button, int action, int mods)
+void Input::Mouse_Button_Callback(GLFWwindow* window, int button, int action, int mods)
 {
 	/*
 	Setup mouse button on release to prevent multiple calls from being made per frame
 	Need mouse button functionality for 3 buttons: Left, Middle, Right
 	*/
 
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+	{
+		Input::mouse_Left = true;
+	}
+
+	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
 	{
 		/*
-		LEFT mouse button has been released
+		RIGHT mouse button has been released
 		*/
+		Input::mouse_Right = true;
+	}
+
+	if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS)
+	{
+		/*
+		MIDDLE mouse button has been released
+		*/
+		Input::mouse_Middle = true;
+	}
+
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+	{
+		Input::mouse_Left = false;
 	}
 
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
@@ -180,6 +152,7 @@ void Mouse_Button_Callback(GLFWwindow* window, int button, int action, int mods)
 		/*
 		RIGHT mouse button has been released
 		*/
+		Input::mouse_Right = false;
 	}
 
 	if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_RELEASE)
@@ -187,16 +160,17 @@ void Mouse_Button_Callback(GLFWwindow* window, int button, int action, int mods)
 		/*
 		MIDDLE mouse button has been released
 		*/
+		Input::mouse_Middle = false;
 	}
 
 	return;
 }
 
-void Scroll_Callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-	/*
-	Setup mouse scrolling functionality
-	*/
-
-	return;
-}
+//void Scroll_Callback(GLFWwindow* window, double xoffset, double yoffset)
+//{
+//	/*
+//	Setup mouse scrolling functionality
+//	*/
+//
+//	return;
+//}

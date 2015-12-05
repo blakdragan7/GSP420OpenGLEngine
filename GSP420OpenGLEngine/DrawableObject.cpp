@@ -11,6 +11,8 @@ DrawableObject::DrawableObject(void)
 	rotation = 0;
 	isLocked = false;
 
+	blendR=blendG=blendB=1;
+
 	uuid = lastUUID++;
 }
 
@@ -31,4 +33,11 @@ void DrawableObject::unlock()
 {
 	mutex.unlock();
 	isLocked = false;
+}
+
+void DrawableObject::setBlendColor(float r,float g,float b)
+{
+	blendR = r;
+	blendG = g;
+	blendB = b;
 }

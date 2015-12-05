@@ -41,7 +41,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)\includes;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\includes;$(SolutionDir)\includes\AL;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\libs\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -59,7 +59,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>OpenGL32.lib;glu32.lib;glew32s.lib;glfw3.lib;pthreadVC2.lib;assimp.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;glu32.lib;glew32s.lib;glfw3.lib;pthreadVC2.lib;assimp.lib;OpenAL32.lib;alut.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>
@@ -86,7 +86,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AudioSource.cpp" />
+    <ClCompile Include="AudioSource.cpp" />
     <ClInclude Include="AudioSource.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="DrawableObject.h" />
@@ -96,6 +96,7 @@
     <ClInclude Include="helper.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Level.h" />
+    <ClInclude Include="lMainMenu.h" />
     <ClInclude Include="lodepng\lodepng.h" />
     <ClInclude Include="Menus.h" />
     <ClInclude Include="Sprite.h" />
@@ -113,6 +114,7 @@
     <ClCompile Include="helper.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Level.cpp" />
+    <ClCompile Include="lMainMenu.cpp" />
     <ClCompile Include="lodepng\lodepng.cpp" />
     <ClCompile Include="Menus.cpp" />
     <ClCompile Include="Sprite.cpp" />

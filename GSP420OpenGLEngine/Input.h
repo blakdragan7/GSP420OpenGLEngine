@@ -23,16 +23,34 @@
 class Input
 {
 private:
-	GLFWwindow* window;
-	int key;
-	int scan_code;
-	int action;
-	int mods;
+	
 
 public:
+	
+	static void Initialize(GLFWwindow* w);	// sets up the mouse and keyboard
+	static void Key_Callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	static void SetCursorPos(GLFWwindow* window, double xpos, double ypos);
+	static void Mouse_Button_Callback(GLFWwindow* window, int button, int action, int mods);
+
+	// Mouse Info
+	static double mouseX;
+	static double mouseY;
+
+	// Mouse Press Info
+	static bool mouse_Left;
+	static bool mouse_Right;
+	static bool mouse_Middle;
+
+	// Keyboard Info
+	static int key;
+	static int scan_code;
+	static int action;
+	static int mods;
+	
 	Input();
 	Input(const Input&);
 	~Input();
-	void Initialize();	// sets up the mouse and keyboard
+	
+
 	
 };

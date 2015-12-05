@@ -12,6 +12,7 @@ protected:
 
 	bool shouldRenderTexture; // if true then will bind and render texture
 	bool shouldUseProgram;    // if true then will use a shader program 
+	bool hasAlpha;			  //If set to true will enable alhp blending for drawing 
 							
 public:
 	Sprite();

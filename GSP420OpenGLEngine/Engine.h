@@ -29,7 +29,7 @@ public:
 	Engine(void);
 	~Engine(void);
 
-	void init(); // initialize the engine
+	void init(int argc, _TCHAR* argv[]); // initialize the engine
 	void run(); // main run loop
 	void shutdown(); // de init everything
 
@@ -42,5 +42,8 @@ public:
 	static void AddLevelToEngine(Level* newObject); // used to add an level to the egnine so that it is drawn and updated 
 
 	friend void* UpdateThreadFunc(void*); // Make update thread func friend of class so it can access private variables
+
+	static int argc;
+	static _TCHAR** argv;
 };
 

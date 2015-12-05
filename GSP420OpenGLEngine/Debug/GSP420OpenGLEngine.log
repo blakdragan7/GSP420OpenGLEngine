@@ -1,0 +1,33 @@
+﻿Build started 12/5/2015 2:24:10 PM.
+     1>Project "E:\git\GSP420OpenGLEngine\GSP420OpenGLEngine\GSP420OpenGLEngine.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D GLEW_STATIC /D _CRTDBG_MAP_ALLOC /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /FR"Debug\\" /Gd /TP /analyze- /errorReport:prompt Button.cpp
+         Button.cpp
+     1>c:\program files (x86)\windows kits\8.0\include\shared\minwindef.h(130): warning C4005: 'APIENTRY' : macro redefinition
+                 e:\git\gsp420openglengine\includes\glfw\glfw3.h(92) : see previous definition of 'APIENTRY'
+     1>e:\git\gsp420openglengine\gsp420openglengine\button.cpp(160): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>e:\git\gsp420openglengine\gsp420openglengine\button.cpp(165): warning C4305: 'argument' : truncation from 'double' to 'float'
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\git\GSP420OpenGLEngine\Debug\GSP420OpenGLEngine.exe" /INCREMENTAL /NOLOGO OpenGL32.lib glu32.lib glew32s.lib glfw3.lib pthreadVC2.lib assimp.lib OpenAL32.lib alut.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:\git\GSP420OpenGLEngine\Debug\GSP420OpenGLEngine.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\git\GSP420OpenGLEngine\Debug\GSP420OpenGLEngine.lib" /MACHINE:X86 Debug\AudioSource.obj
+         Debug\Button.obj
+         Debug\DrawableObject.obj
+         Debug\Engine.obj
+         Debug\GLShaderProgram.obj
+         Debug\GLTexture.obj
+         Debug\GSP420OpenGLEngine.obj
+         Debug\helper.obj
+         Debug\Input.obj
+         Debug\Level.obj
+         Debug\lMainMenu.obj
+         Debug\lodepng.obj
+         Debug\Menus.obj
+         Debug\Sprite.obj
+         Debug\stdafx.obj
+         GSP420OpenGLEngine.vcxproj -> E:\git\GSP420OpenGLEngine\Debug\GSP420OpenGLEngine.exe
+       BscMake:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\bscmake.exe /nologo /o"E:\git\GSP420OpenGLEngine\Debug\GSP420OpenGLEngine.bsc" /n Debug\AudioSource.sbr Debug\Button.sbr Debug\DrawableObject.sbr Debug\Engine.sbr Debug\GLShaderProgram.sbr Debug\GLTexture.sbr Debug\GSP420OpenGLEngine.sbr Debug\helper.sbr Debug\Input.sbr Debug\Level.sbr Debug\lMainMenu.sbr Debug\lodepng.sbr Debug\Menus.sbr Debug\Sprite.sbr Debug\stdafx.sbr
+     1>Done Building Project "E:\git\GSP420OpenGLEngine\GSP420OpenGLEngine\GSP420OpenGLEngine.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:39.35

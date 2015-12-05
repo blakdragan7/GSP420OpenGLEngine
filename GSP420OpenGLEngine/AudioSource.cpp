@@ -9,47 +9,18 @@ Modification (Use IDs):
 #include <cstdlib>
 #include <iostream>
 #include <windows.h>
+#include <Al\alut.h>
 
+#include "Engine.h"
 #include "AudioSource.h"
 
 #pragma once
 
 using namespace std;
 
+static bool isInit = false;
 
-//GLOBAL VARIABLES
-DWORD 	size, 
-		sample_rate, 
-		average_bytes_per_second, 
-		data_size, chunk_data;
-//these variables work with the types of sound data
-
-short	format,
-		channel,
-		bits_per_sample,
-		bytes_per_sample;
-//the variables above help with various parts of the sound data
-
-ALCdevice * device;
-ALCcontext * context;
 //above variables do stuff
-
-FILE * 	source = NULL;	//This is the file "name", it's currently NULL until someone places a 
-						//a sound file in it.
-
-bool	looping; 	//The looping determines whether or not the sound is
-					//suppose to loop or not.
-			
-char 	type_size[4];	//this helps determine the type of file the sound is coming from
-
-unsigned char *buffer = new unsigned char[data_size];	 //this is to hold information for the sound data
-	
-//The ALuint and ALenum variables are in use for the audio buffer
-ALuint	AL_source,
-		AL_buffer,
-		frequency = sample_rate;
-			
-ALenum	AL_format = 0;
 	
 ALfloat	SourcePos[] = {0.0, 0.0, 0.0},						
 		SourceVel[] = {0.0, 0.0, 0.0},
@@ -61,41 +32,25 @@ ALfloat	SourcePos[] = {0.0, 0.0, 0.0},
 		//position, velocity, and orientation of the listener
 
 //PUBLIC FUNCTIONS
-void AudioSource::Load_Sound(FILE *source, short bits_per_sample, short channel, char type_size, bool looping)
-{
-	/**
-	The purpose of this particular function is to make it easier for the user
-	to load the sound file before playing the file. That way the user would not have to 
-	call various functions to open the sound file, initialize the OpenAL, load the sound file, and THEN play it.
-	**/
-	
-	//Please uncomment the blocked comments below to open the new audio file.
-	
-	
-	source = fopen("insert file name here", "rb"); //This is to open the sound file.
-	bits_per_sample = 8;  //insert an integer here, either '8' or '16'
-							//'bits_per_sample' determines which channel the game should focus on.
-	
-	channel = 1; //insert an integer here, either '1' or '2'
-					//the 'channel' determines the format of the sound being played.
-					
-	looping = AL_FALSE;	//insert a boolean value, either 'AL_TRUE' or 'AL_FALSE'
-						// 'looping' controls the looping of the sound file.
-	
-	
-	Check_Sound(source, &type_size, size); 
-	Read(chunk_data, format, channel, sample_rate,
-			average_bytes_per_second, bytes_per_sample, bits_per_sample);
-	File_Size(&type_size,data_size);
-	
-	//Initializing and working with OpenAL
+AudioSource::AudioSource()
+{ 
+	AL_format = AL_FORMAT_MONO8;
+	looping = AL_FALSE; //The looping determines whether or not the sound is supposed to loop or not. It's set to AL_FALSE as default.
+
 	Initialize();
-	Buffer_Sound(AL_source, AL_buffer);
-	Format_Sound(bits_per_sample, channel);
-	Load_Buffer(AL_buffer, format, buffer, data_size, frequency);
-	Position_Sound(AL_source, *SourcePos, *SourceVel, 
-		*ListenerPos, *ListenerOri, *ListenerVel, looping);
 }
+
+
+AudioSource::~AudioSource()
+{
+}
+
+void AudioSource::Load(char* filename, bool looping)
+{
+	Buffer_Sound(filename);
+	Position_Sound(AL_source, *SourcePos, *SourceVel, *ListenerPos, *ListenerOri, *ListenerVel, looping);
+}
+
 
 void AudioSource::Play_Sound()
 {
@@ -109,115 +64,92 @@ void AudioSource::Pause()
 	alSourcePause(AL_source);
 }
 
-void AudioSource::Delete(FILE *source, ALuint AL_source, ALuint AL_buffer, unsigned char *buffer, ALCcontext *context, ALCdevice *device)
+void AudioSource::Stop()
+{
+	//This is a simple function to stop the audio.
+	alSourceStop(AL_source);
+}
+
+void AudioSource::Volume(int volume)
+{
+	//The purpose of this function is to give you the ability to change the volume of an asset.
+	//For instance, if we were to have a volume slider built in the game in the options menu; the slider will 
+	//control the volume of the background music. 
+	//Another example is the variety of volumes set manually within the code.
+	switch(volume)
+	{
+	case '0':
+		alSourcef(AL_source, AL_GAIN, 0.0f);
+		break;
+	case '10':
+		alSourcef(AL_source, AL_GAIN, 0.1f);
+		break;
+	case '20':
+		alSourcef(AL_source, AL_GAIN, 0.2f);
+		break;
+	case '30':
+		alSourcef(AL_source, AL_GAIN, 0.3f);
+		break;
+	case '40':
+		alSourcef(AL_source, AL_GAIN, 0.4f);
+		break;
+	case '50':
+		alSourcef(AL_source, AL_GAIN, 0.5f);
+		break;
+	case '60':
+		alSourcef(AL_source, AL_GAIN, 0.6f);
+		break;
+	case '70':
+		alSourcef(AL_source, AL_GAIN, 0.7f);
+		break;
+	case '80':
+		alSourcef(AL_source, AL_GAIN, 0.8f);
+		break;
+	case '90':
+		alSourcef(AL_source, AL_GAIN, 0.9f);
+		break;
+	case '100':
+		alSourcef(AL_source, AL_GAIN, 1.0f);
+		break;
+	default:
+		alSourcef(AL_source, AL_GAIN, 1.0f);
+	}
+}
+
+void AudioSource::Delete()
 {
 	fclose(source);
 	delete[] buffer;
 	alDeleteSources(1, &AL_source);
 	alDeleteBuffers(1, &AL_buffer);
-	alcMakeContextCurrent(NULL);
-	alcDestroyContext(context);
-	alcCloseDevice(device);
 }
 
-
-//PRIVATE FUNCTIONS
-
-void AudioSource::Check_Sound(FILE *source, char type_size[], DWORD &size)
-{
-	fread(type_size,sizeof(char),4,source);
-	
-	if(type_size[0] != 'm' || type_size[1] != 'p' || type_size[2] != '3' ||
-		type_size[3] != ' ')
-		{
-			endWithError((char*)"Not MP3");
-		}
-	fread(&size, sizeof(DWORD), 1, source);
-	fread(type_size, sizeof(char), 4, source);
-	
-	if(type_size[0] != 'W' || type_size[1] != 'A' || type_size[2] != 'V' ||
-		type_size[3] != 'E')
-		{
-			return endWithError("Not WAVE");
-		}
-}
-void AudioSource::Read(DWORD chunk_data, short format, short channel, DWORD sample_rate,
-			DWORD average_bytes_per_second, short bytes_per_sample, short bits_per_sample)
-{
-	fread(&chunk_data, sizeof(DWORD), 1, source);
-	fread(&format, sizeof(short), 1, source);
-	fread(&channel, sizeof(short), 1, source);
-	fread(&sample_rate,sizeof(DWORD),1, source);
-	fread(&average_bytes_per_second, sizeof(DWORD),1, source);
-	fread(&bytes_per_sample, sizeof(short), 1, source);
-	fread(&bits_per_sample, sizeof(short), 1, source);
-}
-void AudioSource::File_Size(char type_size[], DWORD data_size)
-{
-	fread(type_size, sizeof(char),4, source);
-	
-	if(type_size[0] != 'D' || type_size[1] != 'A' || type_size[2] != 'T' ||
-		type_size[3] != 'A')
-		{
-			return endWithError("Not DATA");
-		}
-	fread(&data_size, sizeof(DWORD), 1, source);
-	
-	unsigned char *buffer = new unsigned char [data_size];
-	fread(buffer, sizeof(BYTE),data_size, source);
-}
-	
-	//Initializing and working with OpenAL
+//Initializing and working with OpenAL
 void AudioSource::Initialize()
 {
-	
-	device = alcOpenDevice(NULL);
-	if(!device)
+	if(!isInit)
 	{
-		return endWithError("no sound device");
-	}
-	
-	context = alcCreateContext(device, NULL);
-	alcMakeContextCurrent(context);
-	if(!context)
-	{
-		return endWithError("no sound context");
+		isInit = alutInit(&Engine::argc,(char**)Engine::argv);
 	}
 }
-void AudioSource::Buffer_Sound(ALuint AL_source, ALuint AL_buffer)
+void AudioSource::Buffer_Sound(const char* fileName)
 {
-	alGenBuffers(1, &AL_buffer);
+	AL_buffer = alutCreateBufferFromFile(fileName);
+	ALenum err = alutGetError();
+	if(err != AL_NO_ERROR)
+	{
+		cout << "Error Creating Buffer " << alutGetErrorString(err) << endl;
+	}
+
 	alGenSources(1, &AL_source);
-}
-void AudioSource::Format_Sound(short bits_per_sample, short channel)
-{
-	if(bits_per_sample == 8)
+
+	err = alGetError();
+	if(err != AL_NO_ERROR)
 	{
-		if(channel == 1)
-		{
-			format = AL_FORMAT_MONO8;
-		}
-		else if(channel == 2)
-		{
-			format = AL_FORMAT_STEREO8;
-		}
-	}
-	else if(bits_per_sample == 16)
-	{
-		if(channel == 1)
-		{
-			format = AL_FORMAT_MONO16;
-		}
-		else if(channel == 2)
-		{
-			format = AL_FORMAT_STEREO16;
-		}	
+		cout << "Error Creating Source " << err << endl;
 	}
 }
-void AudioSource::Load_Buffer(ALuint AL_buffer, short format, unsigned char *buffer, DWORD data_size, ALuint frequency)
-{
-	alBufferData(AL_buffer, format, &buffer, data_size, frequency);
-}
+
 void AudioSource::Position_Sound(ALuint AL_source, ALfloat SourcePos, ALfloat SourceVel, 
 					ALfloat ListenerPos, ALfloat ListenerOri, ALfloat ListenerVel, bool looping)
 {
@@ -237,6 +169,33 @@ void AudioSource::Position_Sound(ALuint AL_source, ALfloat SourcePos, ALfloat So
 
 void AudioSource::endWithError(char *message)
 {
-cout << message << "\n";
-exit(0);
+	cout << message << "\n";
 }
+
+/*
+
+THIS IS HOW YOU UTILIZE THE SOUND FILES AND AUDIO CORE
+DO NOT UNCOMMENT UNLESS YOU WANT TO MAKE CHANGES
+
+int main(int argc, char *argv[])
+{
+	AudioSource example; 
+	example.Load("hello.wav",AL_FALSE);
+
+	[insert button mechanic]
+	[detect if button has been clicked]
+	[if button is clicked then play sound]
+
+	example.Play_Sound();
+
+	[if you need to pause or mute the sound, click a button to pause]
+	example.Pause();
+
+	[Once game is over or button clicked, then stop or delete the sound]
+	example.Stop();
+	example.Delete();
+
+	//***Volume only varies with how you use it.
+	example.Volume(10);
+}
+*/

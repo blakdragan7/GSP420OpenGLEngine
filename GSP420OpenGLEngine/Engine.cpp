@@ -1,13 +1,17 @@
 #include "Engine.h"
 #include "DrawableObject.h"
-#include "Level.h"
+#include "lMainMenu.h"
 #include "Sprite.h"
+#include "Input.h"
 #include <ctime>
 
 static Engine* engineInstance = 0;
 
 void resizeWindow(GLFWwindow*,int,int);
 void* UpdateThreadFunc(void* data);
+
+int Engine::argc=0;
+_TCHAR** Engine::argv=0;
 
 Engine::Engine(void)
 {
@@ -20,8 +24,11 @@ Engine::~Engine(void)
 {
 }
 
-void Engine::init()
+void Engine::init(int argc_, _TCHAR* argv_[])
 {
+	argc = argc_;
+	argv = argv_;
+
 	glfwInit(); // init window library
 	
 	// Normally you specify Whcih Version you want to use but we dont really care since we are using legacy code anyway.
@@ -48,9 +55,9 @@ void Engine::init()
 
 	glClearColor(1.0,0.0,0.0,1.0); // Set the Clear Color to red its not needed just something I always do
 
-	levels.push_back(new Level()); // Add a default level
+	Input::Initialize(mainWindow);
 
-	levels[0]->addOBject(new Sprite("data/background.png",0)); // add background to default level
+	levels.push_back(new lMainMenu()); // Add a default level
 
 	currentLevel = 0; // Set current level to default level
 

@@ -8,7 +8,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	Engine engine;
 
-	engine.init();
+	engine.init(argc,argv);
 	engine.run();
 	engine.shutdown();
 

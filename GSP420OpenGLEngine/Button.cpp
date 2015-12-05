@@ -3,76 +3,89 @@
 #include "GLShaderProgram.h"
 #include <GL\glew.h>
 
+using namespace std;
+
 Button::Button() : Sprite()
 {
 	position = Vec2D(0, 0);
-	isHovered = false;
-	isClicked = false;
-
 	scaleButton(0.5, 0.25);
+	tag = "";
+	clickSound = 0;
+	ButtonDown = false;
+	hasAlpha = true;
 }
 
-Button::Button(Vec2D pos, const char* file, GLShaderProgram* program) : Sprite(file, program)
+Button::Button(Vec2D pos, string t, const char* file, GLShaderProgram* program) : Sprite(file, program)
 {
 	position = pos;
-	isHovered = false;
-	isClicked = false;
-
 	scaleButton(0.5, 0.25);
+	tag = t;
+	clickSound = 0;
+	ButtonDown = false;
+	hasAlpha = true;
 }
 
-Button::Button(Vec2D pos, Vec2D scal, const char* file, GLShaderProgram* program) : Sprite(file, program)
+Button::Button(Vec2D pos, Vec2D scal, string t, const char* file, GLShaderProgram* program) : Sprite(file, program)
 {
+	tag = t;
 	position = pos;
-	isHovered = false;
-	isClicked = false;
-
 	scaleButton(scal);
+	clickSound = 0;
+	ButtonDown = false;
+	hasAlpha = true;
 }
 
-Button::Button(Vec2D pos, Vec2D scal, double rotat, const char* file, GLShaderProgram* program) : Sprite(file, program)
+Button::Button(Vec2D pos, Vec2D scal, string t, double rotat, const char* file, GLShaderProgram* program) : Sprite(file, program)
 {
+	tag = t;
 	position = pos;
 	scale = scal;
 	rotation = rotat;
-
-	isClicked = false;
-	isHovered = false;
-
 	scaleButton(scal);
+	clickSound = 0;
+	ButtonDown = false;
+	hasAlpha = true;
 }
 
-Button::Button(Vec2D pos, GLTexture* tex,GLShaderProgram* program) : Sprite(tex, program)
+Button::Button(Vec2D pos, string t, GLTexture* tex,GLShaderProgram* program) : Sprite(tex, program)
 {
+	tag = t;
 	position = pos;
-	isHovered = false;
-	isClicked = false;
-
 	scaleButton(0.5, 0.5);
+	clickSound = 0;
+	ButtonDown = false;
+	hasAlpha = true;
 }
 
-Button::Button(Vec2D pos, Vec2D scal, GLTexture* tex, GLShaderProgram* program) : Sprite(tex, program)
+Button::Button(Vec2D pos, string t, Vec2D scal, GLTexture* tex, GLShaderProgram* program) : Sprite(tex, program)
 {
+	tag = t;
 	position = pos;
 	scale = scal;
-
-	isHovered = false;
-	isClicked = false;
+	clickSound = 0;
+	ButtonDown = false;
+	hasAlpha = true;
 }
 
-Button::Button(Vec2D pos, Vec2D scal, double rotat, GLTexture* tex, GLShaderProgram* program) : Sprite(tex, program)
+Button::Button(Vec2D pos, string t, Vec2D scal, double rotat, GLTexture* tex, GLShaderProgram* program) : Sprite(tex, program)
 {
+	tag = t;
 	position = pos;
 	scale = scal;
 	rotation = rotat;
-
-	isHovered = false;
-	isClicked = false;
+	clickSound = 0;
+	ButtonDown = false;
+	hasAlpha = true;
 }
 
 Button::~Button()
 {
 
+}
+
+void Button::setClickSound(AudioSource* sound)
+{
+	clickSound = sound;
 }
 
 // Translate the Button based on a Vec2D
@@ -105,4 +118,56 @@ void Button::scaleButton(double x, double y)
 void Button::rotate(double r)
 {
 	rotation = r;
+}
+
+// Checks to see if mouse is over the button and leeft mouse button is pressed
+bool Button::isClicked()
+{
+	bool flag = false;
+
+	if (Input::mouseX <= position.x + scale.x && Input::mouseX >= position.x - scale.x 
+		&& Input::mouseY <= position.y + scale.y && Input::mouseY >= position.y - scale.y && Input::mouse_Left)
+		flag = true;
+	else
+		flag = false;
+
+	return flag;
+}
+
+// Checks to see if mouse is over the button
+bool Button::isHovered()
+{
+	bool flag = false;
+
+	if(Input::mouseX <= position.x + scale.x && Input::mouseX >= position.x - scale.x 
+		&& Input::mouseY <= position.y + scale.y && Input::mouseY >= position.y - scale.y)
+		flag = true;
+	else
+		flag = false;
+
+	return flag;
+}
+
+// UPDATE THE BUTTON
+void Button::update(float dt)
+{	
+	if(isClicked())
+	{
+		if(clickSound && !ButtonDown)
+			clickSound->Play_Sound();
+		ButtonDown = true;
+
+		setBlendColor(0.4,0.4,0.4);
+
+	}
+	else if (isHovered())
+	{
+		setBlendColor(0.8,0.8,0.8);
+		ButtonDown = false;
+	}
+	else
+	{
+		setBlendColor(1,1,1);
+		ButtonDown = false;
+	}
 }

@@ -1,5 +1,24 @@
-Debug/
-Release/
-*.filters
-*.suo
-*.sdf
+class Car // this is a class called Car it has three members
+{
+public:
+	int nuberWheels;
+	int numberPassengers;
+	int numberOfSeats;
+}
+
+
+int main(int argc,char *argv[])
+{
+	Car Mustang; // This is called creating an instance of Car
+				// The variable Mustang is the instance and has its own set of the three members
+
+	Car Van;  // This is creating another instance of Car
+				// The variable Van is another instance and has another set of the members
+				
+	Mustang.nuberWheels = 4; // when you change the nuberWheels on Mustang it does not affect the nuberWheels on Van
+	Van.nuberWheels = 3; 
+				
+		// The same applies to every other member
+		
+	return 0;
+}

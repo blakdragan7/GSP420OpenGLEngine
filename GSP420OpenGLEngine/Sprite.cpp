@@ -60,10 +60,18 @@ void Sprite::draw()
 	else
 		glUseProgram(0); // Sets the current shader program to the default program
 
+	if(hasAlpha)
+	{
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+
 	glBegin(GL_QUADS); // Begin Drawing QUADS
 
 	// Drawing is done in a counter clockwise order because openGl CULLS (doesnt render) 
 	// things going in a clockwise direction as they are assumed to be facing away from the camera
+
+	glColor3f(blendR,blendG,blendB); // Blend Color
 
 	glTexCoord2f(0,0);
 		glVertex2f(-1,-1); // Bottm Left
@@ -75,6 +83,11 @@ void Sprite::draw()
 		glVertex2f(-1, 1); // Top Left
 
 	glEnd(); // Single To OpenGL that this opbject is finished being drawn
+
+	if(hasAlpha)
+	{
+		glDisable(GL_BLEND);
+	}
 
 	glPopMatrix(); // Return To the previous copy of the matric before it was modified here
 
