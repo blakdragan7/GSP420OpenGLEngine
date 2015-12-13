@@ -1,11 +1,16 @@
 #include "Engine.h"
 #include "DrawableObject.h"
+#include "LTowerDefenceLevel.h"
 #include "lMainMenu.h"
 #include "Sprite.h"
 #include "Input.h"
+
 #include <ctime>
+#include <iostream>
 
 static Engine* engineInstance = 0;
+
+bool Engine::shouldRun = true;
 
 void resizeWindow(GLFWwindow*,int,int);
 void* UpdateThreadFunc(void* data);
@@ -17,6 +22,7 @@ Engine::Engine(void)
 {
 	engineInstance = this;
 	shouldRun = true;
+	nextLevel = -1;
 }
 
 
@@ -58,6 +64,9 @@ void Engine::init(int argc_, _TCHAR* argv_[])
 	Input::Initialize(mainWindow);
 
 	levels.push_back(new lMainMenu()); // Add a default level
+	levels.push_back(new LTowerDefenceLevel());
+
+	levels[0]->init();
 
 	currentLevel = 0; // Set current level to default level
 
@@ -66,19 +75,31 @@ void Engine::init(int argc_, _TCHAR* argv_[])
 
 void Engine::run()
 {
-	while(!glfwWindowShouldClose(mainWindow)) // if you close the window stop the program
+	while(!glfwWindowShouldClose(mainWindow) && shouldRun) // if you close the window stop the program
 	{
+		if(lastLevel != -1 && nextLevel != -1)
+		{
+			 levels[lastLevel]->tearDown();
+ 
+			 levels[nextLevel]->init();
+			 currentLevel = nextLevel;
+
+			 lastLevel = -1;
+			 nextLevel = -1;
+		}
+
 		drawGLScene(); // draw the scene
 		glfwPollEvents(); // handle window events
 	}
+
+	shouldRun = false;
 }
 
 void Engine::shutdown()
 {
-
-	shouldRun = false;
-
 	pthread_join(updateThread,0);
+
+	levels[currentLevel]->tearDown();
 
 	for (auto level : levels)
 	{
@@ -114,9 +135,24 @@ void Engine::updateAll()
 	lastTime = time;
 }
 
- void Engine::AddLevelToEngine(Level* newObject)
+ int Engine::AddLevelToEngine(Level* newObject)
  {
 	 engineInstance->levels.push_back(newObject);
+
+	 return engineInstance->levels.size();
+ }
+
+ void Engine::TransitionToLevel(int index)
+ {
+	 if(index >= engineInstance->levels.size())
+	 {
+		 std::cout << "ENGINE Warning cannot transition to non exsistant level!\n";
+		 return;
+	 }
+
+	 engineInstance->lastLevel = engineInstance->currentLevel;
+	 engineInstance->currentLevel = -1;
+	 engineInstance->nextLevel = index;
  }
 
  void resizeWindow(GLFWwindow* window,int w,int h)

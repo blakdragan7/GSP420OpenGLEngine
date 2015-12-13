@@ -1,5 +1,6 @@
 #include "Button.h"
 #include "GLTexture.h"
+#include "Engine.h"
 #include "GLShaderProgram.h"
 #include <GL\glew.h>
 
@@ -162,6 +163,22 @@ void Button::update(float dt)
 	}
 	else if (isHovered())
 	{
+		if(ButtonDown)
+		{
+			if(tag.compare("Start")==0)
+			{
+				Engine::TransitionToLevel(1);
+			}
+			else if(tag.compare("Exit")==0)
+			{
+				Engine::shouldRun = false;
+			}
+			else
+			{
+
+			}
+		}
+
 		setBlendColor(0.8,0.8,0.8);
 		ButtonDown = false;
 	}

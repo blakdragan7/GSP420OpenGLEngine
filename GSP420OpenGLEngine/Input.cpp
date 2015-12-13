@@ -1,5 +1,5 @@
 #include "Input.h"
-
+#include <iostream>
 
 
 
@@ -109,8 +109,8 @@ void Input::SetCursorPos(GLFWwindow* window, double xpos, double ypos)
 	Input::mouseX = (xpos * 2.0 / (float)width) - 1.0;
 	Input::mouseY = (ypos * 2.0 / (float)-height) + 1.0;
 
-	//cout << Input::mouseX << " " << Input::mouseY << endl;
-
+	//std::cout << Input::mouseX << " " << Input::mouseY << std::endl;
+	
 	return;
 }
 

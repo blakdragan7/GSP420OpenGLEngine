@@ -118,8 +118,6 @@ void AudioSource::Volume(int volume)
 
 void AudioSource::Delete()
 {
-	fclose(source);
-	delete[] buffer;
 	alDeleteSources(1, &AL_source);
 	alDeleteBuffers(1, &AL_buffer);
 }

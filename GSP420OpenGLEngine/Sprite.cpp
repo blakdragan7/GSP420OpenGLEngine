@@ -10,6 +10,9 @@ Sprite::Sprite(void) : DrawableObject()
 
 	shouldRenderTexture = false;
 	shouldUseProgram = false;
+
+	needsDelete = false;
+	hasAlpha = false;
 }
 
 Sprite::Sprite(GLTexture* tex,GLShaderProgram* program) : DrawableObject()
@@ -19,6 +22,9 @@ Sprite::Sprite(GLTexture* tex,GLShaderProgram* program) : DrawableObject()
 
 	shouldRenderTexture = tex != 0;
 	shouldUseProgram = program != 0;
+
+	needsDelete = false;
+	hasAlpha = false;
 }
 
 Sprite::Sprite(const char* file,GLShaderProgram* program) : DrawableObject()
@@ -29,11 +35,16 @@ Sprite::Sprite(const char* file,GLShaderProgram* program) : DrawableObject()
 	shouldRenderTexture = texture != 0;
 	shouldUseProgram = program != 0;
 
+	needsDelete = true;
+	hasAlpha = false;
 }
 
 Sprite::~Sprite(void)
 {
-	// We dont de allocate the texture becasue that will be the texture managers job
+	if(needsDelete)
+	{
+		if(texture)delete this->texture;
+	}
 }
 
 void Sprite::draw()
@@ -73,14 +84,14 @@ void Sprite::draw()
 
 	glColor3f(blendR,blendG,blendB); // Blend Color
 
-	glTexCoord2f(0,0);
-		glVertex2f(-1,-1); // Bottm Left
-	glTexCoord2f(1,0);
-		glVertex2f( 1,-1); // Bottom Right
-	glTexCoord2f(1,1);
-		glVertex2f( 1, 1); // Top Right
-	glTexCoord2f(0,1);
-		glVertex2f(-1, 1); // Top Left
+	glTexCoord2f(0,0);		// Bottm Left
+		glVertex2f(-1,1); 
+	glTexCoord2f(1,0);		// Bottom Right
+		glVertex2f( 1,1); 
+	glTexCoord2f(1,1);		// Top Right
+		glVertex2f( 1, -1); 
+	glTexCoord2f(0,1);		// Top Left
+		glVertex2f(-1, -1); 
 
 	glEnd(); // Single To OpenGL that this opbject is finished being drawn
 
@@ -99,4 +110,9 @@ void Sprite::update(float dt)
 	 // This is where any updating would occure (ex physics life check etc.. )
 	//  This can and should be overriden in a sub class 
 
+}
+
+void Sprite::setAlpha(bool alpha)
+{
+	hasAlpha=alpha;
 }

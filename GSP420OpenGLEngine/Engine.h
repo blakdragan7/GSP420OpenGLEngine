@@ -20,10 +20,8 @@ private:
 	GLFWwindow* mainWindow;
 	std::vector<Level*> levels;
 
-	int currentLevel;
+	int currentLevel,nextLevel,lastLevel;
 	pthread_t updateThread;
-
-	bool shouldRun;
 
 public:
 	Engine(void);
@@ -39,11 +37,14 @@ public:
 	void setLevel(int level); // sets the current level to be drawn and updated
 	void setLevel(Level* level); // sets the current leleve to be dran and updated
 
-	static void AddLevelToEngine(Level* newObject); // used to add an level to the egnine so that it is drawn and updated 
+	static int AddLevelToEngine(Level* newObject); // used to add an level to the egnine so that it is drawn and updated  returns the index of the level added
+	static void TransitionToLevel(int LevelIndex); // UseToChangeLevels
 
 	friend void* UpdateThreadFunc(void*); // Make update thread func friend of class so it can access private variables
 
 	static int argc;
 	static _TCHAR** argv;
+
+	static bool shouldRun;
 };
 

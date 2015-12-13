@@ -11,12 +11,6 @@ Level::Level(void) : DrawableObject()
 
 Level::~Level(void)
 {
-	for(auto object : allObjects) // remove all objects safely
-	{
-		delete object.second;
-	}
-
-	allObjects.clear(); // clear the array
 }
 
 void Level::draw()
@@ -54,4 +48,14 @@ void Level::addOBject(DrawableObject* object)
 	allObjects.insert(std::pair<long long,DrawableObject*>(object->uuid,object));
 
 	unlock();
+}
+
+void Level::tearDown()
+{
+	for(auto object : allObjects) // remove all objects safely
+	{
+		delete object.second;
+	}
+
+	allObjects.clear(); // clear the array
 }

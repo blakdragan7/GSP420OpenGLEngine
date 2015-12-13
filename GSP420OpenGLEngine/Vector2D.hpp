@@ -165,6 +165,19 @@ public:
 		return *this;
 	}
 
+	bool operator > (Vector2D other)
+	{
+		return compSquareSum() > other.compSquareSum();
+	}
+	bool operator < (Vector2D other)
+	{
+		return compSquareSum() < other.compSquareSum();
+	}
+	bool operator == (Vector2D other)
+	{
+		return x== other.x && y == other.y;
+	}
+
 	void rotate(Vector2D origin,float angle /*radians*/)
 	{
 		Vector2D p(*this);
@@ -186,6 +199,11 @@ public:
 
 		x = p.x;
 		y = p.y;
+	}
+
+	t compSquareSum()
+	{
+		return ((x*x) + (y*y));
 	}
 
 	t magnitude()

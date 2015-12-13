@@ -18,5 +18,8 @@ private:
 public:
 	lMainMenu(void);
 	~lMainMenu(void);
+
+	virtual void init();
+	virtual void tearDown();
 };
 

@@ -11,6 +11,8 @@ public:
 	Level(void);
 	~Level(void);
 
+	virtual void init()=0;
+	virtual void tearDown();
 	virtual void draw() override;
 	virtual void update(float dt) override;
 
